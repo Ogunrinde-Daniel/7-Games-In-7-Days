@@ -14,15 +14,26 @@ public class RandomSpawn : MonoBehaviour
     private const float waitTime = 2f;
 
     private float timerCountDown = 10f;
-    private bool gameOver = false;
+    public bool gameOver = true;
 
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI highScoreText;
+    [SerializeField] private TextMeshProUGUI restartText;
+
 
 
     private int score = 0;
+    public SoundManager soundManager;
 
+    public void restart()
+    {
+        soundManager.playTick();
+        timerCountDown = 10f;
+        gameOver = false;
+        restartText.text = "";
+        score = 0;
+    }
     private void Start()
     {
         target = GetComponent<Rigidbody2D>();
@@ -32,6 +43,7 @@ public class RandomSpawn : MonoBehaviour
         SetMinAndMax();
 
         PlayerPrefs.SetInt("highScore", 0);
+        gameOver = true;
 
     }
 
@@ -59,9 +71,13 @@ public class RandomSpawn : MonoBehaviour
         if (timerCountDown < 0)
         {
             if (score > PlayerPrefs.GetInt("highScore", 0))
+            {
                 PlayerPrefs.SetInt("highScore", score);
+                soundManager.playHurray();
+            }
 
             highScoreText.text = "HI: " + PlayerPrefs.GetInt("highScore", 0).ToString();
+            restartText.text = "Click Target to Start";
             gameOver = true;
 
         }
@@ -69,8 +85,11 @@ public class RandomSpawn : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (gameOver) return;
-
+        if (gameOver)
+        {
+            restart();
+        }
+        soundManager.playShot();
         score += 10;
         scoreText.text = "Score: " + score.ToString();
         spawnCountDown = 0f;
