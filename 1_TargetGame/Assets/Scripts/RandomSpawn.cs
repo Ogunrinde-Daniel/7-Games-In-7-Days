@@ -14,7 +14,7 @@ public class RandomSpawn : MonoBehaviour
     private const float waitTime = 2f;
 
     private float timerCountDown = 10f;
-    public bool gameOver = true;
+    private bool gameOver = true;
 
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI scoreText;
@@ -36,14 +36,16 @@ public class RandomSpawn : MonoBehaviour
     }
     private void Start()
     {
+
         target = GetComponent<Rigidbody2D>();
-      
+
         targetSize[0] = target.GetComponent<Renderer>().bounds.size.x;
         targetSize[1] = target.GetComponent<Renderer>().bounds.size.y;       
         SetMinAndMax();
 
         PlayerPrefs.SetInt("highScore", 0);
-        gameOver = true;
+        gameOver = false;
+        soundManager.playTick();
 
     }
 
@@ -83,6 +85,8 @@ public class RandomSpawn : MonoBehaviour
         }
 
     }
+
+ 
     private void OnMouseDown()
     {
         if (gameOver)
